@@ -15,6 +15,8 @@ dados_trabalho_libdem<-
   filter(year>= 1960)
 
 
+saveRDS(dados_trabalho_libdem, "dados_trabalho_libdem.rds")
+
 dados_trabalho_libdem %>%
   filter(country_text_id %in% c("BRA", "USA")) %>%
   ggplot(aes(x= year, y= v2x_libdem)) +
