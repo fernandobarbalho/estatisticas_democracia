@@ -12,6 +12,9 @@ library(tidyverse)
 
 dados_trabalho_libdem <- readRDS("~/Github/estatisticas_democracia/dados_trabalho_libdem.rds")
 
+de_para_paises_sel <- read_delim("de_para_paises_sel.csv", 
+    delim = ";", escape_double = FALSE, trim_ws = TRUE)
+
 
 theme_vpr<- function(paleta_cores){
   
@@ -35,15 +38,15 @@ theme_vpr<- function(paleta_cores){
 }
 
 
-paleta_cores<- list(  cor_fundo= "#D0D0D0", # "#E0E0E0", # # "#F8F8F8",
+paleta_cores<- list(  cor_fundo="#2B2B2B",# "#696969", #"#D0D0D0", # "#E0E0E0", # # "#F8F8F8",
                       
-                      cor_fundo_painel = "#F5F5F5",
+                      cor_fundo_painel ="#696969",  "#F5F5F5",
                       
                       cor_fundo_estados = "#696969",
                       
                       cor_fundo_mapa_pontos = "#2B2B2B", #"#505050"
                       
-                      cor_texto = "#324e5a"
+                      cor_texto = "#F5F5F5"# "#324e5a"
 )
 ```
 
@@ -55,35 +58,68 @@ When you click the **Knit** button a document will be generated that includes bo
 
 ```{r fig.dpi= 300}
 
-dados_ultimo_ano<-
-  dados_trabalho_libdem %>%
-  filter(year == 2025) %>%
-  mutate(valor = v2x_libdem) %>%
-  select(country_text_id, valor)
 
+brasil_color <- "#FFCC00"# "#FFCC00"
+
+# Criar um dataframe com os limites dos retângulos
+retangulos <- data.frame(
+
+  xmin =  c(1960, 1960),
+  xmax = c(2025,2025),
+  ymin = c(0,0.7),
+  ymax= c(0.7,1),
   
 
+  fill =  c(
+  "Low" = "#D64550",
+  "High" = "#2C7BE5"
+)
+
+)
+
+
 dados_grafico_serie<-
-  dados_trabalho_libdem %>%
-  group_by(country_text_id) %>%
-  mutate(valor_anterior = lag(v2x_libdem)) %>%
-  #inner_join(dados_ultimo_ano) %>%
-  mutate(nivel_minimo = case_when(
-    v2x_libdem >0.7 and valor_anterior
-  )) 
+  dados_trabalho_libdem 
 
 dados_sel<-
   dados_grafico_serie %>%
-  filter(country_text_id %in% c("BRA","USA", "ARG"))
+  filter(country_text_id %in% c("BRA"))%>%
+  inner_join(de_para_paises_sel)
 
+dados_sel_outros<-
+  dados_grafico_serie %>%
+  filter(country_text_id %in% c("USA", "ARG","DNK")) %>%
+  inner_join(de_para_paises_sel)
+
+  
 
 dados_grafico_serie  %>%
   ggplot(aes(x= year, y= v2x_libdem)) +
-  geom_line(aes(color = nivel_minimo, group = country_text_id), alpha = 0.15)  +
-  geom_line(data = dados_sel, aes(color = nivel_minimo, group = c(country_text_id) ), alpha = 1, size =1)+
-  geom_hline(yintercept = 0.7, linetype = "dashed") +
-  scale_fill_manual(values = c("#D64550", "#2C7BE5")) +
-  theme_vpr(paleta_cores = paleta_cores)
+  geom_rect(data = retangulos, 
+    aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, fill = fill),
+    inherit.aes = FALSE,
+    alpha = 1) +
+  geom_line(aes( group = country_text_id), color= "lightgray",  alpha = 0.2)  +
+  geom_line(data = dados_sel_outros, aes( group = country_text_id), color= paleta_cores$cor_texto,  alpha = 1)  +
+  geom_line(data = dados_sel, aes(group = c(country_text_id) ), color = brasil_color, alpha = 1, size =1)+
+  geom_text(data = dados_sel %>% filter(year == 2025), 
+            aes(label = paste0(name_pt,": ", scales::number(v2x_libdem, decimal.mark = ",", accuracy = 0.001))),
+            hjust = -0.05,
+            color = brasil_color,
+            fontface = "bold") +
+  geom_text(data = dados_sel_outros %>% filter(year == 2025), 
+            aes(label = paste0(name_pt,": ", scales::number(v2x_libdem, decimal.mark = ",", accuracy = 0.001))),
+            hjust = -0.05,
+            color = paleta_cores$cor_texto,
+            fontface = "bold") +  
+  scale_fill_identity() +
+  scale_x_continuous(expand = expansion(mult = c(0.01,0.3)), breaks = c(seq(from = 1960, to= 2020, by=20), 2025)) +
+  scale_y_continuous(breaks = 0.7) +
+  theme_vpr(paleta_cores = paleta_cores) +
+  theme(
+    axis.text = element_text(color = paleta_cores$cor_texto),
+    axis.title = element_blank()
+  )
   
 
 ```
