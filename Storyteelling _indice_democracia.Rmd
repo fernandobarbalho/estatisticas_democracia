@@ -91,7 +91,11 @@ dados_sel_outros<-
   filter(country_text_id %in% c("USA", "ARG","DNK")) %>%
   inner_join(de_para_paises_sel)
 
-  
+
+#Textos: 
+#Pelo segundo ano consecutivo há mais autocracia do que democracias
+#A média do indicador do período Bolsonaro corresponde ao valor alcançado no momento da redemocratização
+#O período entre 2005 e 2014, governos Lula e Dilma, corresponde ao maior patamar já atingino pelo Brasil 
 
 dados_grafico_serie  %>%
   ggplot(aes(x= year, y= v2x_libdem)) +
@@ -106,12 +110,20 @@ dados_grafico_serie  %>%
             aes(label = paste0(name_pt,": ", scales::number(v2x_libdem, decimal.mark = ",", accuracy = 0.001))),
             hjust = -0.05,
             color = brasil_color,
-            fontface = "bold") +
+            fontface = "bold",
+            size = 6) +
   geom_text(data = dados_sel_outros %>% filter(year == 2025), 
             aes(label = paste0(name_pt,": ", scales::number(v2x_libdem, decimal.mark = ",", accuracy = 0.001))),
             hjust = -0.05,
             color = paleta_cores$cor_texto,
             fontface = "bold") +  
+  geom_point(data = dados_sel %>% filter(year == 2025), color = brasil_color, size = 1.3) +
+  geom_point(data = dados_sel_outros %>% filter(year == 2025), color = paleta_cores$cor_texto, size = 1) +
+  geom_text(data = tibble(year = 2005, v2x_libdem = 0.2), 
+            aes(label = str_wrap("Pelo segundo ano consecutivo há mais autocracias do que democracias",40)),
+            color = paleta_cores$cor_texto,
+            fill = paleta_cores$cor_fundo_painel,
+            fontface = "bold") +
   scale_fill_identity() +
   scale_x_continuous(expand = expansion(mult = c(0.01,0.3)), breaks = c(seq(from = 1960, to= 2020, by=20), 2025)) +
   scale_y_continuous(breaks = 0.7) +
@@ -119,6 +131,11 @@ dados_grafico_serie  %>%
   theme(
     axis.text = element_text(color = paleta_cores$cor_texto),
     axis.title = element_blank()
+  ) +
+  labs(
+    title = "Estabilidade da democracia brasileira em meio à erosão global",
+    subtitle = str_wrap("Após pior nível desde 1988, país estabiliza indicador e ultrapassa EUA no V-Dem 2025", 90),
+    caption = "Fonte: VDem. Elaboração: VPR/DIESO"
   )
   
 
