@@ -119,14 +119,14 @@ dados_grafico_serie  %>%
             fontface = "bold") +  
   geom_point(data = dados_sel %>% filter(year == 2025), color = brasil_color, size = 1.3) +
   geom_point(data = dados_sel_outros %>% filter(year == 2025), color = paleta_cores$cor_texto, size = 1) +
-  geom_label(data = tibble(year = 2005, v2x_libdem = 0.2), 
-            aes(label = str_wrap("Pelo segundo ano consecutivo há mais autocracias do que democracias",40)),
+  geom_label(data = tibble(year = 2005, v2x_libdem = 0.15), 
+            aes(label = str_wrap("Pelo segundo ano consecutivo há mais autocracias do que democracias nos mais de 180 países analisados",35)),
             color = paleta_cores$cor_texto,
             fill = paleta_cores$cor_fundo_painel,
             fontface = "bold",
             alpha = 0.3) +
   geom_text(data = tibble(year = 2022, v2x_libdem = 0.4), 
-            aes(label = str_wrap("Média sob Bolsonaro retornou ao nível de 1988",30)),
+            aes(label = str_wrap("Média do índice sob Bolsonaro retornou ao nível de 1988",30)),
             color = brasil_color,
             fill = paleta_cores$cor_fundo_painel,
             fontface = "bold",
@@ -137,7 +137,7 @@ dados_grafico_serie  %>%
              curvature = 0.2, ncp = 50,arrow = arrow(length = unit(3, "mm"), type = "closed"),
              color = brasil_color )  +
   geom_text(data = tibble(year = 1961, v2x_libdem = 0.95), 
-            aes(label = str_wrap("Nos governos Lula–Dilma (2005–2014), Brasil atingiu auge histórico",90)),
+            aes(label = str_wrap("Nos governos Lula–Dilma (2005–2015), Brasil atingiu auge histórico",90)),
             color = brasil_color,
             fill = paleta_cores$cor_fundo_painel,
             fontface = "bold",
@@ -156,7 +156,7 @@ dados_grafico_serie  %>%
   ) +
   labs(
     title = "Estabilidade da democracia brasileira em meio à erosão global",
-    subtitle = str_wrap("Após forte retrocesso no período 2019–2022, Brasil estabiliza índice e supera os EUA pela primeira vez", 85),
+    subtitle = str_wrap("Após forte retrocesso no período 2019–2022, Brasil estabiliza índice de democracia liberal do V-DEM e supera os EUA pela primeira vez", 85),
     caption = "Fonte: V-Dem. Elaboração: VPR/DIESO"
   )
   
