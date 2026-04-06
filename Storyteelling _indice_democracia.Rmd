@@ -157,7 +157,7 @@ dados_grafico_serie  %>%
   labs(
     title = "Estabilidade da democracia brasileira em meio à erosão global",
     subtitle = str_wrap("Após forte retrocesso no período 2019–2022, Brasil estabiliza índice de democracia liberal do V-DEM e supera os EUA pela primeira vez", 85),
-    caption = "Fonte: V-Dem. Elaboração: VPR/DIESO"
+    caption = "Fonte: V-Dem. Elaboração: Fernando Barbalho"
   )
   
 
